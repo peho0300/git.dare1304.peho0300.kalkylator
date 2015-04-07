@@ -1,5 +1,12 @@
 package calculator;
 
+import exception.ParserErrorException;
+
+/**
+ * 
+ * @author Peter Höglund
+ * @versionj 1.0
+ */
 public class Calculator {
 	
 	String exp;
@@ -12,15 +19,16 @@ public class Calculator {
 		
 	}
 	
-	public float getResult() {
-		PostfixParser parser = new PostfixParser(exp);
-		PostfixCalculator calc = new PostfixCalculator(parser.getPostFix());
+	public float getResult() throws ParserErrorException {
 		
-		return calc.getResult();
+			PostfixParser parser = new PostfixParser(exp);
+			PostfixCalculator calc = new PostfixCalculator(parser.getPostfix());
+			
+			return calc.getResult();
 		
 	}
 	
-	public float getResult(String expression) {
+	public float getResult(String expression) throws ParserErrorException {
 		exp=expression;
 		return getResult();
 	}
