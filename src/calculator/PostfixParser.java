@@ -95,6 +95,7 @@ public class PostfixParser {
 	
 	/* Tokenizes the infix expression */
 	private void tokenize(String infix) {
+		infix = infix.replaceAll("\\s","");
 		StringTokenizer tokenizer = new StringTokenizer(infix, operatorString, true);
 		while(tokenizer.hasMoreTokens()) {
 			input.add(tokenizer.nextToken());
@@ -111,7 +112,7 @@ public class PostfixParser {
 			throw new ParserErrorException("Expression cannot be empty");
 		for (String string : input) {
 			if (Operators.isOperator(string)) {
-				lastInputWasEndParenthesis = handleAsOperator(string, lastInputWasNumber);
+				lastInputWasEndParenthesis = handleAsOperator(string, lastInputWasNumber, lastInputWasEndParenthesis);
 				lastInputWasNumber = false;
 			}
 			else {
@@ -127,7 +128,7 @@ public class PostfixParser {
 	 * Return true if last operator was an end parenthesis, false otherwise
 	 * Throws ParserErrorException if an invalid expression has been subjected. 
 	 */
-	private boolean handleAsOperator(String operator, boolean lastInputWasNumber) throws ParserErrorException {
+	private boolean handleAsOperator(String operator, boolean lastInputWasNumber, boolean lastInputWasEndParenthesis) throws ParserErrorException {
 		Operators op = Operators.getFromSymbol(operator);
 		if (op.equals(Operators.END_PARENTHESIS)) {
 			handleEndParenthesis();
@@ -137,6 +138,8 @@ public class PostfixParser {
 			handleStartParenthesis(lastInputWasNumber);
 		}
 		else {
+			if (!lastInputWasNumber && !lastInputWasEndParenthesis)
+				throw new ParserErrorException("Double operators");
 			addOperator(op);
 		}
 		return false;

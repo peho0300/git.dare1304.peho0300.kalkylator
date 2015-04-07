@@ -128,6 +128,13 @@ public class PostfixParserTest {
 		assertEquals(expectedResult, parser.getPostfix());
 	}
 	
+	@Test
+	public void testWhitespace() throws ParserErrorException {
+		parser = new PostfixParser("8 +18");
+		expectedResult = Arrays.asList("8","18","+");
+		assertEquals(expectedResult, parser.getPostfix());
+	}
+	
 	@Test(expected=ParserErrorException.class)
 	public void testLetter() throws ParserErrorException {
 		parser = new PostfixParser("8+L");
@@ -137,6 +144,12 @@ public class PostfixParserTest {
 	@Test(expected=ParserErrorException.class)
 	public void testEmptyInput() throws ParserErrorException {
 		parser = new PostfixParser("");
+		parser.getPostfix();
+	}
+	
+	@Test(expected=ParserErrorException.class)
+	public void testDoubleOperator() throws ParserErrorException {
+		parser = new PostfixParser("23**14");
 		parser.getPostfix();
 	}
 	
