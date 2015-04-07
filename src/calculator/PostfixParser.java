@@ -105,38 +105,51 @@ public class PostfixParser {
 	 * Throws ParserErrorException if an invalid expression has been subjected.
 	 */
 	private void parse() throws ParserErrorException {
+		boolean lastInputWasNumber = false;
+		boolean lastInputWasEndParenthesis = false;
 		if (input.isEmpty()) 
 			throw new ParserErrorException("Expression cannot be empty");
 		for (String string : input) {
 			if (Operators.isOperator(string)) {
-				handleAsOperator(string);
+				lastInputWasEndParenthesis = handleAsOperator(string, lastInputWasNumber);
+				lastInputWasNumber = false;
 			}
 			else {
-				handleAsNumber(string);
+				handleAsNumber(string, lastInputWasEndParenthesis);
+				lastInputWasNumber = true;
+				lastInputWasEndParenthesis = false;
 			}
 		}
 		handleRemainingOperators();
 	}
 	
 	/* Separates an end parenthesis from all other operators 
+	 * Return true if last operator was an end parenthesis, false otherwise
 	 * Throws ParserErrorException if an invalid expression has been subjected. 
 	 */
-	private void handleAsOperator(String operator) throws ParserErrorException {
+	private boolean handleAsOperator(String operator, boolean lastInputWasNumber) throws ParserErrorException {
 		Operators op = Operators.getFromSymbol(operator);
 		if (op.equals(Operators.END_PARENTHESIS)) {
 			handleEndParenthesis();
+			return true;
+		}		
+		else if (op.equals(Operators.START_PARENTHESIS)) {
+			handleStartParenthesis(lastInputWasNumber);
 		}
 		else {
 			addOperator(op);
-		}	
+		}
+		return false;
 	}
 	
 	/* Adds number to output 
 	 * Throws ParserErrorException if the String contains invalid characters. 
 	 */
-	private void handleAsNumber(String number) throws ParserErrorException {
+	private void handleAsNumber(String number, boolean lastInputWasEndParenthesis) throws ParserErrorException {
 		if (!isAllNumber(number))
 			throw new ParserErrorException("Expression contains invalid characters");
+		if (lastInputWasEndParenthesis)
+			addOperator(Operators.MULTIPLICATION);
 		output.add(number);
 	}
 	
@@ -147,6 +160,15 @@ public class PostfixParser {
 			result = result && Character.isDigit(c);
 		}
 		return result;
+	}
+	
+	/* Adds a start parenthesis to the operator stack and 
+	 * a multiplication operator before that if the last input was a number 
+	 */
+	private void handleStartParenthesis(boolean lastInputWasNumber) {
+		if (lastInputWasNumber)
+			addOperator(Operators.MULTIPLICATION);
+		addOperator(Operators.START_PARENTHESIS);
 	}
 	
 	/* Flushes operatorStack until a start parenthesis is encountered.
@@ -163,6 +185,7 @@ public class PostfixParser {
 			}
 			popTopOperator();
 		}
+		
 	}
 	
 	/* Adds an operator to the operator stack */

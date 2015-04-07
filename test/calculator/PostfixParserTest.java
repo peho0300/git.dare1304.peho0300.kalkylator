@@ -115,6 +115,13 @@ public class PostfixParserTest {
 	}
 	
 	@Test
+	public void testImplicitMultiplication() throws ParserErrorException {
+		parser = new PostfixParser("10(3*3)18");
+		expectedResult = Arrays.asList("10", "3", "3", "*", "*", "18", "*");
+		assertEquals(expectedResult, parser.getPostfix());
+	}
+	
+	@Test
 	public void testComplexExpression() throws ParserErrorException {
 		parser = new PostfixParser("3*(5+3*6)-5+2*(9/2-3)");
 		expectedResult = Arrays.asList("3","5","3","6","*","+","*","5","-","2","9","2","/","3","-","*","+");
