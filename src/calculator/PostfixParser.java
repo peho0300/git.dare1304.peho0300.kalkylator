@@ -49,16 +49,14 @@ public class PostfixParser {
 	Deque<Operators> operatorStack = new ArrayDeque<Operators>();
 	String operatorString;
 	
-	public PostfixParser() {
+	public PostfixParser(String infix) {
 		input = new Vector<String>();
 		output = new Vector<String>();
 		initOperatorString();
+		tokenize(infix);
 	}
 	
-	public List<String> getPostFix(String infix) {
-		input.clear();
-		output.clear();
-		tokenize(infix);
+	public List<String> getPostFix() {
 		parse();
 		return output;
 	}
