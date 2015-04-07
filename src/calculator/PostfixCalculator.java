@@ -5,27 +5,27 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * En klass som tar en lista som innehåller ett uttryck i postfix-
- * format, räknar ut det och returnerar ett resultat
+ * Calculates Postfix expression and returns result
  * 
  * @author Peter Höglund
- *
+ * @version 1.0
+ * 
  */
 public class PostfixCalculator {
 	List<String> input;
 	Stack<Float> stacken;
 	
 	/**
-	 * Konstuktor
-	 * @param in Uttrycket som ska räknas i Postfix-format
+	 * Constructor
+	 * @param in Expression in Postfix-format
 	 */
 	public PostfixCalculator(List<String> in) {
 		input= in;
 	}
 	
 	/**
-	 * Funktion som räknar ut uttryck i postfix-format
-	 * @return Resultatet från uträkningen
+	 * Calculates the expression.
+	 * @return The result of the calculation.
 	 */
 	public float getResult() {
 		
@@ -38,40 +38,44 @@ public class PostfixCalculator {
 			
 			currentItem = iter.next();
 			
-			if(currentItem.equals("+")|currentItem.equals("-")|currentItem.equals("*")|currentItem.equals("/")) { //Kolla ifall currentItem är en operator
+			/* Check for operator */
+			if(currentItem.equals("+")|currentItem.equals("-")|currentItem.equals("*")|currentItem.equals("/")) {
 				
-				/* Poppa operanderna*/
-				leftOperand = stacken.pop();
+				/* Pop the operands*/
 				rightOperand = stacken.pop();
+				leftOperand = stacken.pop();
 				
 				
-				/* Avgör vilken operator det är*/
+				
+				/* Decide what operator to use*/
 				switch (currentItem) { 
 					case "+":
-						result = rightOperand+leftOperand; //Räkna
+						result = leftOperand+rightOperand; //Calculate
 						break;
 					case "-":
-						result = rightOperand-leftOperand; //Räkna
+						result = leftOperand-rightOperand; //Calculate
 						break;
 					case "*":
-						result = rightOperand*leftOperand; //Räkna
+						result = leftOperand*rightOperand; //Calculate
 						break;
 					case "/":
-						result = rightOperand/leftOperand; //Räkna
+						result = leftOperand/rightOperand; //Calculate
 						break;
 				}
 				
-				stacken.push(result); //Lägg resultatet på stacken
+				/* Add result to stack */
+				stacken.push(result);
 				
 			}
 			
 			else {
-				
-				stacken.push(Float.parseFloat(currentItem)); //Lägg operand på stacken
+				/* Add operand to stack */
+				stacken.push(Float.parseFloat(currentItem));
 				
 			}
 			
 		}
-		return stacken.pop(); //Returnera det kvarvarande värdet på stacken
+		/* Return the value left on the stack */
+		return stacken.pop();
 	}
 }
